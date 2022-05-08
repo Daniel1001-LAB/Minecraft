@@ -1,0 +1,35 @@
+---
+# Ansible variables
+ansible_python_interpreter: /usr/bin/python3
+
+# NTP Role vars:
+ntp_timezone: Europe/Madrid
+ntp_servers: es.pool.ntp.org
+
+# Firewall Role vars:
+firewall_allowed_tcp_ports:
+  - "22"
+  - "80"
+  - "443"
+
+# Security Role vars:
+security_ssh_port: 22
+security_ssh_password_authentication: "yes"
+security_autoupdate_enabled: true
+
+# Minecraf variables
+minecraft_environment:
+  EULA: 'true'
+  SERVER_NAME: Mineway
+  LEVEL: mineway
+  MOTD: "Bienvenido a Mineway, disfruta de la aventura"
+  VERSION: 1.18.2
+  TYPE: forge
+  ONLINE_MODE: 'false'
+  ENABLE_WHITELIST: 'true'
+  SEED: '650169976047001544'
+  MEMORY: 3584M
+  TZ: Europe/Madrid
+
+# Minecraft mods
+#minecraft_mods:

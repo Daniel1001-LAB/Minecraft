@@ -1,0 +1,149 @@
+name: Deploy infrastructure
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: .
+
+env:
+  TF_VAR_hcloud_token: ${{ secrets.HETZNER_MINEWAY_TOKEN }}
+  TF_VAR_ddns_username: ${{ secrets.DYNU_DDNS_USERNAME }}
+  TF_VAR_ddns_password: ${{ secrets.DYNU_DDNS_PASSWORD }}
+  TF_WORKSPACE: ${{ secrets.TERRAFORM_CLOUD_WORKSPACE }}
+
+jobs:
+  DeployDev:
+    name: Deploy to development
+    if: (github.ref == 'refs/heads/dev') || (github.ref == 'refs/heads/development')
+    runs-on: ubuntu-latest
+    environment: 
+      name: Development
+      url: ${{ steps.environment_url.outputs.server_url }}
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Add SSH public key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/mineway.pub
+          chmod 600 ~/.ssh/mineway.pub
+
+      - name: Add SSH private key
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null   
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+
+      - name: Terraform fmt
+        id: fmt
+        run: cd terraform && terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform init
+        id: init
+        run: cd terraform && terraform init
+
+      - name: Terraform validate
+        id: validate
+        run: cd terraform && terraform validate -no-color
+
+      - name: Terraform plan
+        id: plan
+        run: cd terraform && terraform plan -no-color
+
+      - name: Terraform apply
+        id: apply
+        run: cd terraform && terraform apply -auto-approve
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          TF_VAR_ddns_subdomain: "dev"
+
+      - name: Get deploy environment url
+        id: environment_url
+        run: |
+          echo "::set-output name=server_url::http://dev.$(grep -A 4 "ddns_hostname" terraform/variables.tf | grep default | awk -F "=" '{print $2}' | tr -d '"' | sed "s/ //g")"
+
+  DeployPro:
+    name: Deploy to production 
+    if: (startsWith(github.ref, 'refs/tags/v')) || (github.ref == 'refs/heads/master') || (github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    environment: 
+      name: Production
+      url: ${{ steps.environment_url.outputs.server_url }}
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Add SSH public key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/mineway.pub
+          chmod 600 ~/.ssh/mineway.pub
+
+      - name: Add SSH private key
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null   
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+
+      - name: Terraform fmt
+        id: fmt
+        run: cd terraform && terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform init
+        id: init
+        run: cd terraform && terraform init
+
+      - name: Terraform validate
+        id: validate
+        run: cd terraform && terraform validate -no-color
+
+      - name: Terraform plan
+        id: plan
+        run: cd terraform && terraform plan -no-color
+
+      - name: Terraform apply
+        id: apply
+        run: cd terraform && terraform apply -auto-approve
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+      - name: Get deploy environment url
+        id: environment_url
+        run: |
+          echo "::set-output name=server_url::http://$(grep -A 4 "ddns_hostname" terraform/variables.tf | grep default | awk -F "=" '{print $2}' | tr -d '"' | sed "s/ //g")"
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ${{ steps.Changelog.outputs.changelog }}
+          draft: false
+          prerelease: false

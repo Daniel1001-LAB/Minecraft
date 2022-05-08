@@ -1,0 +1,12 @@
+---
+- name: Server backup
+  hosts: all
+  become: yes
+  vars_files: ../variables.yml
+
+  tasks:
+    - name: Archive folder minecraft-data for backup
+      archive:
+        path: /storage/minecraft/data
+        dest: /tmp/minecraft.tar.gz
+        format: gz

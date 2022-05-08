@@ -1,0 +1,10 @@
+---
+- name: stop minecraft
+  hosts: all
+  become: yes
+  vars_files: ../variables.yml
+  tasks:
+    - name: Stop docker container
+      docker_container:
+        name: minecraft
+        state: stopped

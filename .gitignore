@@ -1,0 +1,12 @@
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock*
+terraform/*.tfstate*
+terraform/credentials.tfrc
+
+# Ansible
+*.retry
+
+# Docker
+docker/data
+.env

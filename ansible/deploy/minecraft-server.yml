@@ -1,0 +1,49 @@
+---
+- name: Install minecraft server
+  hosts: all
+  become: yes
+  vars_files:
+    - ../variables.yml
+
+  tasks:
+    # Download mods
+    - name: Delete mod folder
+      file:
+        path: /storage/minecraft/data/mods
+        state: absent
+      when: minecraft_environment.TYPE == 'forge'
+
+    - name: Create mod folder
+      file:
+        path: /storage/minecraft/data/mods
+        state: directory
+      when: minecraft_environment.TYPE == 'forge'
+
+    - name: Download mods
+      get_url:
+        url: "https://media.forgecdn.net/files/{{ item }}"
+        dest: /storage/minecraft/data/mods
+      loop: "{{ minecraft_mods }}"
+      when: minecraft_environment.TYPE == 'forge' and minecraft_mods is defined
+
+    # Run docker service
+    - name: Start docker service
+      service:
+        name: docker
+        state: started
+
+    # Minecraft server
+    - name: Run Minecraft server
+      docker_container:
+        name: minecraft
+        image: itzg/minecraft-server:latest
+        volumes:
+          - /storage/minecraft/data:/data
+        published_ports:
+          - 25565:25565
+          - 25565:25565/udp
+        env: "{{ minecraft_environment }}"
+        container_default_behavior: no_defaults
+        recreate: yes
+        state: started
+        restart_policy: always
