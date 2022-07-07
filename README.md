@@ -33,7 +33,7 @@ export TF_CLI_CONFIG_FILE="credentials.tfrc"
 Y también elegir un workspace (en caso de tenerlo ya creado):
 
 ```
-TF_WORKSPACE="<TERRAFORM-CLOUD-WORKSTATION>"
+export TF_WORKSPACE="<TERRAFORM-CLOUD-WORKSTATION>"
 ```
 
 Si no quieres utilizar Terraform Cloud, no es necesario realizar ninguno de estos pasos, pero has de eliminar el fichero *terraform/00_workspace.tf*.

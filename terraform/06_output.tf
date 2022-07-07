@@ -5,5 +5,5 @@ output "server_ip" {
 
 # Output server URL
 output "server_url" {
-  value = var.ddns_hostname
+  value = "${var.ddns_subdomain}.${var.ddns_hostname}"
 }
