@@ -7,7 +7,7 @@ minecraft_environment:
   EULA: 'true'
   SERVER_NAME: CalvaLand
   LEVEL: calvaland
-  MOTD: "Bienvenido a CalvaLand, no te estreses, que se te cae el pelo y disfruta de la aventura"
+  MOTD: "Bienvenid@ a CalvaLand, no te estreses, que se te cae el pelo y disfruta de la aventura"
   VERSION: '1.19'
   TYPE: forge
   ONLINE_MODE: 'false'
