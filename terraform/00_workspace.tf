@@ -3,7 +3,7 @@ terraform {
     organization = "HectorCraftx"
 
     workspaces {
-      tags = ["mineway"]
+      tags = ["calvaland"]
     }
   }
 }

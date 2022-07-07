@@ -11,7 +11,7 @@ variable "location" {
 
 variable "server_type" {
   description = "Hetzner server type"
-  default     = "cpx21"
+  default     = "cx31"
   type        = string
 }
 
@@ -47,7 +47,7 @@ variable "ip_server" {
 
 variable "hostname" {
   description = "Hostname for the instance"
-  default     = "mineway"
+  default     = "calvaland"
   type        = string
 }
 
@@ -63,12 +63,12 @@ variable "ddns_password" {
 
 variable "ddns_hostname" {
   description = "FQDN for the instance"
-  default     = "mineway.ddnsfree.com"
+  default     = "rekenaar.dev"
   type        = string
 }
 
 variable "ddns_subdomain" {
   description = "Subdomain for the DDNS"
-  default     = ""
+  default     = "calvaland"
   type        = string
 }

@@ -2,34 +2,35 @@
 # Ansible variables
 ansible_python_interpreter: /usr/bin/python3
 
-# NTP Role vars:
-ntp_timezone: Europe/Madrid
-ntp_servers: es.pool.ntp.org
-
-# Firewall Role vars:
-firewall_allowed_tcp_ports:
-  - "22"
-  - "80"
-  - "443"
-
-# Security Role vars:
-security_ssh_port: 22
-security_ssh_password_authentication: "yes"
-security_autoupdate_enabled: true
-
 # Minecraf variables
 minecraft_environment:
   EULA: 'true'
-  SERVER_NAME: Mineway
-  LEVEL: mineway
-  MOTD: "Bienvenido a Mineway, disfruta de la aventura"
-  VERSION: 1.18.2
+  SERVER_NAME: CalvaLand
+  LEVEL: calvaland
+  MOTD: "Bienvenido a CalvaLand, no te estreses, que se te cae el pelo y disfruta de la aventura"
+  VERSION: '1.19'
   TYPE: forge
   ONLINE_MODE: 'false'
   ENABLE_WHITELIST: 'true'
-  SEED: '650169976047001544'
-  MEMORY: 3584M
+  SEED: '-756599947711801586'
+  MEMORY: 7G
   TZ: Europe/Madrid
 
 # Minecraft mods
-#minecraft_mods:
+minecraft_mods:
+  - https://maven.minecraftforge.net/net/minecraftforge/forge/1.19-41.0.63/forge-1.19-41.0.63-installer.jar # Forge
+  - https://mediafiles.forgecdn.net/files/3834/645/journeymap-1.19-5.8.5rc2-forge.jar # Minimapa
+  - https://mediafiles.forgecdn.net/files/3854/269/voicechat-forge-1.19-2.2.47.jar # Chat de voz
+  - https://mediafiles.forgecdn.net/files/3834/70/jei-1.19-forge-11.0.0.203.jar # JEI
+  - https://mediafiles.forgecdn.net/files/3852/377/Croptopia-1.19-FORGE-2.0.6.jar # Croptopia (Cultivos)
+  - https://mediafiles.forgecdn.net/files/3846/68/Patchouli-1.19-73.jar # (Para Croptopia)
+  - https://mediafiles.forgecdn.net/files/3859/108/mavm-1.1.0-mc1.19.jar # Colores de Ajolotes
+  - https://mediafiles.forgecdn.net/files/3851/698/mcw-trapdoors-1.0.6-mc1.19.jar # (Macaw) Trampillas
+  - https://mediafiles.forgecdn.net/files/3844/125/mcw-doors-1.0.6-mc1.19.jar # (Macaw) Puertas
+  - https://mediafiles.forgecdn.net/files/3830/465/mcw-roofs-2.1.2-mc1.19.jar # (Macaw) Tejados
+  - https://mediafiles.forgecdn.net/files/3830/460/mcw-windows-2.0.3-mc1.19.jar # (Macaw) Ventanas
+  - https://mediafiles.forgecdn.net/files/3830/457/mcw-furniture-3.0.0-mc1.19.jar # (Macaw) Objetos
+  - https://mediafiles.forgecdn.net/files/3828/166/mcw-lights-1.0.3-mc1.19.jar # (Macaw) Luces y lámparas
+  - https://mediafiles.forgecdn.net/files/3827/953/mcw-bridges-2.0.3-mc1.19.jar # (Macaw) Puentes
+  - https://mediafiles.forgecdn.net/files/3827/696/mcw-fences-1.0.5-mc1.19.jar # (Macaw) Vallas y muros
+  - https://mediafiles.forgecdn.net/files/3825/282/mcw-paths-1.0.0-mc1.19.jar # (Macaw) Caminos y pavimentos

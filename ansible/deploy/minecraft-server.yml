@@ -21,16 +21,38 @@
 
     - name: Download mods
       get_url:
-        url: "https://media.forgecdn.net/files/{{ item }}"
+        url: "{{ item }}"
         dest: /storage/minecraft/data/mods
       loop: "{{ minecraft_mods }}"
       when: minecraft_environment.TYPE == 'forge' and minecraft_mods is defined
+
+    # Configure voicechat mod
+    - name: Creating smb.d directory
+      file:
+        path: "/storage/minecraft/data/{{ minecraft_environment['LEVEL'] }}/serverconfig/"
+        owner: root
+        group: root
+        mode: 0775
+        state: directory
+
+    - name: Change voicechat port
+      copy:
+        src: voicechat-server.toml
+        dest: "/storage/minecraft/data/{{ minecraft_environment['LEVEL'] }}/serverconfig/voicechat-server.toml"
+        owner: root
+        group: root
+        mode: 0664
 
     # Run docker service
     - name: Start docker service
       service:
         name: docker
         state: started
+
+    # Create docker network
+    - name: Create docker network
+      docker_network:
+        name: minecraft
 
     # Minecraft server
     - name: Run Minecraft server
@@ -42,6 +64,8 @@
         published_ports:
           - 25565:25565
           - 25565:25565/udp
+        networks:
+          - name: minecraft
         env: "{{ minecraft_environment }}"
         container_default_behavior: no_defaults
         recreate: yes
